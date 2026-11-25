@@ -1,0 +1,61 @@
+{
+	"name": "@grammyjs/storage-libsql",
+	"version": "2.6.0",
+	"private": false,
+	"description": "libSQL (Turso) session storage for grammY.",
+	"homepage": "https://github.com/grammyjs/storages/tree/main/packages/libsql#readme",
+	"bugs": {
+		"url": "https://github.com/grammyjs/storages/issues"
+	},
+	"license": "MIT",
+	"author": "KnightNiwrem <grammyjs@knightniwrem.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/grammyjs/storages.git"
+	},
+	"files": [
+		"README.md",
+		"dist",
+		"package.json",
+		"LICENSE"
+	],
+	"type": "module",
+	"main": "./dist/mod.cjs",
+	"module": "./dist/mod.mjs",
+	"types": "./dist/mod.d.mts",
+	"exports": {
+		".": {
+			"jsr": "./src/mod.ts",
+			"import": {
+				"types": "./dist/mod.d.mts",
+				"default": "./dist/mod.mjs"
+			},
+			"require": {
+				"types": "./dist/mod.d.cts",
+				"default": "./dist/mod.cjs"
+			}
+		}
+	},
+	"scripts": {
+		"typecheck": "tsc",
+		"prebuild": "pnpm typecheck",
+		"test": "node --test __tests__/node.ts",
+		"build": "tsdown"
+	},
+	"dependencies": {
+		"@libsql/client": "0.18",
+		"grammy": "1"
+	},
+	"devDependencies": {
+		"@grammyjs/storage-utils": "workspace:*"
+	},
+	"jsrExclude": [
+		"dist",
+		"package.json"
+	],
+	"jsrInclude": [
+		"src/",
+		"README.md",
+		"LICENSE"
+	]
+}
