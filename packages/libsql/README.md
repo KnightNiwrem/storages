@@ -106,8 +106,9 @@ The `LibSQLAdapter` constructor accepts an options object with:
 
 - `client` (required): A libSQL `Client` instance created via `createClient()`
   from `@libsql/client` (or `@libsql/client/web`)
-- `tableName` (optional): The name of the table where sessions are stored.
-  Defaults to `'sessions'`
+- `tableName` (optional): The unqualified name of the table where sessions are
+  stored. Defaults to `'sessions'`. Quoted as a single SQLite identifier (dots
+  are treated literally rather than as a schema qualifier)
 
 The adapter does not create, close, or otherwise manage the supplied `Client`
 connection.

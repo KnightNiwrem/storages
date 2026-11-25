@@ -90,8 +90,9 @@ test('handles falsy JSON values', async (t) => {
 })
 
 test('propagates invalid stored JSON and unexpected value types', async (t) => {
-	const client = await createTestClient()
+	const client = createClient({ url: ':memory:' })
 	t.after(() => client.close())
+	await client.execute('CREATE TABLE "sessions" ("key" TEXT PRIMARY KEY, "value" TEXT)')
 
 	await client.execute({
 		sql: 'INSERT INTO "sessions" ("key", "value") VALUES (?, ?)',
@@ -101,11 +102,17 @@ test('propagates invalid stored JSON and unexpected value types', async (t) => {
 		sql: 'INSERT INTO "sessions" ("key", "value") VALUES (?, ?)',
 		args: ['blob', new Uint8Array([1, 2, 3])],
 	})
+	await client.execute({
+		sql: 'INSERT INTO "sessions" ("key", "value") VALUES (?, ?)',
+		args: ['null-value', null],
+	})
 
 	const adapter = new LibSQLAdapter({ client })
 
 	await assert.rejects(adapter.read('broken'), SyntaxError)
 	await assert.rejects(adapter.read('blob'), TypeError)
+	assert.equal(await adapter.has('null-value'), true)
+	await assert.rejects(adapter.read('null-value'), TypeError)
 })
 
 test('pizza counter session test', async (t) => {
