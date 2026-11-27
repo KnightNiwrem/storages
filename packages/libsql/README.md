@@ -60,11 +60,25 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 Replace `"sessions"` with your preferred table name if you pass a custom
 `tableName` option.
 
+Alternatively, if you prefer to run a defensive migration in application code
+(for example, when using local SQLite files created on demand), execute it on
+your client before passing it to `LibSQLAdapter`:
+
+```ts
+await client.execute(`
+	CREATE TABLE IF NOT EXISTS "sessions" (
+		"key" TEXT PRIMARY KEY,
+		"value" TEXT NOT NULL
+	)
+`)
+```
+
 ## Usage
 
 You can check the
 [examples](https://github.com/grammyjs/storages/tree/main/packages/libsql/examples)
-folder, or see a simple example below.
+folder (including `node-local.ts` and `deno-local.ts` for local SQLite files),
+or see a simple example below.
 
 ```ts
 import { LibSQLAdapter } from '@grammyjs/storage-libsql'
@@ -104,11 +118,11 @@ using `@libsql/client/web` and pass it to `LibSQLAdapter` in the same way.
 
 The `LibSQLAdapter` constructor accepts an options object with:
 
-- `client` (required): A libSQL `Client` instance created via `createClient()`
-  from `@libsql/client` (or `@libsql/client/web`)
+- `client` (required): A libSQL-compatible client (such as one created via
+  `createClient()` from `@libsql/client` or `@libsql/client/web`)
 - `tableName` (optional): The unqualified name of the table where sessions are
   stored. Defaults to `'sessions'`. Quoted as a single SQLite identifier (dots
   are treated literally rather than as a schema qualifier)
 
-The adapter does not create, close, or otherwise manage the supplied `Client`
+The adapter does not create, close, or otherwise manage the supplied `client`
 connection.

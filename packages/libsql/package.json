@@ -43,11 +43,11 @@
 		"build": "tsdown"
 	},
 	"dependencies": {
-		"@libsql/client": "0.18",
 		"grammy": "1"
 	},
 	"devDependencies": {
-		"@grammyjs/storage-utils": "workspace:*"
+		"@grammyjs/storage-utils": "workspace:*",
+		"@libsql/client": "0.18"
 	},
 	"jsrExclude": [
 		"dist",

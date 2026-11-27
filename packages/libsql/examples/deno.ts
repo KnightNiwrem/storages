@@ -13,6 +13,13 @@ const client = createClient({
 	authToken: Deno.env.get('TURSO_AUTH_TOKEN'),
 })
 
+await client.execute(`
+	CREATE TABLE IF NOT EXISTS "sessions" (
+		"key" TEXT PRIMARY KEY,
+		"value" TEXT NOT NULL
+	)
+`)
+
 const bot = new Bot<MyContext>(Deno.env.get('BOT_TOKEN')!)
 
 bot.use(

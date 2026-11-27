@@ -1,17 +1,39 @@
-import type { Client } from '@libsql/client'
 import type { StorageAdapter } from 'grammy/web'
 
 const DEFAULT_TABLE_NAME = 'sessions'
+
+/**
+ * Minimal statement shape executed by {@link LibSQLAdapter}.
+ */
+export interface LibSQLStatement {
+	sql: string
+	args: string[]
+}
+
+/**
+ * Minimal query result shape consumed by {@link LibSQLAdapter}.
+ */
+export interface LibSQLResultSet {
+	rows: ReadonlyArray<Record<string, unknown>>
+}
+
+/**
+ * Minimal libSQL-compatible client interface accepted by {@link LibSQLAdapter}.
+ * Compatible with `Client` from `@libsql/client`, `@libsql/client/web`, and custom wrappers.
+ */
+export interface LibSQLClient {
+	execute(stmt: LibSQLStatement): Promise<LibSQLResultSet>
+}
 
 /**
  * Options for configuring {@link LibSQLAdapter}.
  */
 export interface LibSQLAdapterOptions {
 	/**
-	 * A libSQL client created via `createClient()` from `@libsql/client` (or `@libsql/client/web`).
-	 * The caller owns the client lifecycle; the adapter never closes it.
+	 * A libSQL-compatible client (for example, created via `createClient()` from `@libsql/client`
+	 * or `@libsql/client/web`). The caller owns the client lifecycle; the adapter never closes it.
 	 */
-	client: Client
+	client: LibSQLClient
 	/**
 	 * Unqualified table name where sessions are stored. Defaults to `'sessions'`.
 	 * Quoted as a single SQLite identifier (dots are treated literally, not as a schema qualifier).
@@ -24,13 +46,13 @@ function quoteIdentifier(identifier: string): string {
 }
 
 /**
- * Storage adapter for libSQL (Turso).
+ * Storage adapter for libSQL (Turso) and local SQLite files via a libSQL-compatible client.
  *
  * Expects the target table to exist beforehand with `"key"` (primary key or unique `TEXT`)
  * and `"value"` (`TEXT NOT NULL`) columns, storing JSON-serialized session values.
  */
 export class LibSQLAdapter<T> implements StorageAdapter<T> {
-	private readonly client: Client
+	private readonly client: LibSQLClient
 	private readonly tableName: string
 
 	/**
