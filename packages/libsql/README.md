@@ -60,9 +60,11 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 Replace `"sessions"` with your preferred table name if you pass a custom
 `tableName` option.
 
-Alternatively, if you prefer to run a defensive migration in application code
-(for example, when using local SQLite files created on demand), execute it on
-your client before passing it to `LibSQLAdapter`:
+Alternatively, if you prefer to run a defensive migration in application code,
+execute it on your client before passing it to `LibSQLAdapter`. Note that this
+adds an extra query on every startup (so it is best limited to local SQLite
+files or long-running processes rather than serverless cold starts), and the
+table name must match any custom `tableName` option:
 
 ```ts
 await client.execute(`
