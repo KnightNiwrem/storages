@@ -14,7 +14,7 @@ export interface LibSQLStatement {
  * Minimal query result shape consumed by {@link LibSQLAdapter}.
  */
 export interface LibSQLResultSet {
-	rows: ReadonlyArray<Record<string, unknown>>
+	rows: readonly Record<string, unknown>[]
 }
 
 /**
