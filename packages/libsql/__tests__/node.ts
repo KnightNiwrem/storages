@@ -71,6 +71,21 @@ test('supports special characters in table names and keys', async (t) => {
 	}
 })
 
+test('upserts correctly for tables named excluded or matching the alias', async (t) => {
+	for (const tableName of ['excluded', 'EXCLUDED', 't']) {
+		const client = await createTestClient(tableName)
+		t.after(() => client.close())
+
+		const adapter = new LibSQLAdapter<{ a: number }>({ client, tableName })
+
+		await adapter.write('chat:1', { a: 1 })
+		assert.deepEqual(await adapter.read('chat:1'), { a: 1 })
+
+		await adapter.write('chat:1', { a: 2 })
+		assert.deepEqual(await adapter.read('chat:1'), { a: 2 })
+	}
+})
+
 test('propagates invalid stored JSON and unexpected value types', async (t) => {
 	const client = createClient({ url: ':memory:' })
 	t.after(() => client.close())

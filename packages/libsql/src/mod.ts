@@ -104,7 +104,7 @@ export class LibSQLAdapter<T> implements StorageAdapter<T> {
 	 */
 	async write(key: string, value: T): Promise<void> {
 		await this.client.execute({
-			sql: `INSERT INTO ${this.tableName} ("key", "value") VALUES (?, ?) ON CONFLICT ("key") DO UPDATE SET "value" = excluded."value"`,
+			sql: `INSERT INTO ${this.tableName} AS t ("key", "value") VALUES (?, ?) ON CONFLICT ("key") DO UPDATE SET "value" = excluded."value"`,
 			args: [key, JSON.stringify(value)],
 		})
 	}
